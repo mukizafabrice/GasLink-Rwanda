@@ -1,14 +1,21 @@
-// src/types/index.ts
-
-// API Response Types
-export interface ApiResponse<T = any> {
-  success: boolean;
-  message: string;
-  data?: T;
-  error?: string;
+export enum UserRole {
+  CLIENT = 'CLIENT',
+  MERCHANT = 'MERCHANT',
+  ADMIN = 'ADMIN'
 }
 
-// Auth Types
+export interface User {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
+  role: UserRole;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface LoginRequest {
   email: string;
   password: string;
@@ -20,51 +27,17 @@ export interface RegisterRequest {
   firstName: string;
   lastName: string;
   phone?: string;
-  role: 'CLIENT' | 'MERCHANT' | 'ADMIN';
-  
-  // Merchant specific
-  businessName?: string;
-  businessEmail?: string;
-  businessPhone?: string;
-  businessLicense?: string;
-  province?: string;
-  district?: string;
-  sector?: string;
-  cell?: string;
-  village?: string;
-  description?: string;
+  role: UserRole;
 }
 
 export interface AuthResponse {
   token: string;
-  user: {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    role: 'CLIENT' | 'MERCHANT' | 'ADMIN';
-    phone?: string;
-  };
+  user: User;
 }
 
-// User Types
-export interface User {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  role: 'CLIENT' | 'MERCHANT' | 'ADMIN';
-  phone?: string;
-  merchantProfile?: {
-    id: string;
-    businessName: string;
-    isVerified: boolean;
-  };
-}
-
-// Error Types
-export interface ApiError {
+export interface ApiResponse<T = any> {
+  success: boolean;
   message: string;
-  status?: number;
-  data?: any;
+  data?: T;
+  error?: string;
 }

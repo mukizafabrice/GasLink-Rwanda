@@ -9,7 +9,7 @@ const api = axios.create({
   },
 });
 
-// Request interceptor to add auth token
+// Request interceptor
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -23,17 +23,10 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor to handle errors
+// Response interceptor - SIMPLIFIED
 api.interceptors.response.use(
   (response) => response,
-  async (error) => {
-    // If error is 401, clear auth data and redirect to login
-    if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
-    }
-
+  (error) => {
     return Promise.reject(error);
   }
 );

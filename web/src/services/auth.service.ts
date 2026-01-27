@@ -1,41 +1,43 @@
-// src/services/auth.service.ts
-import { api } from '@/lib/api';
-import type { LoginRequest, RegisterRequest, AuthResponse, ApiResponse } from '@/types';
+import api from './api';
+import type { LoginRequest, RegisterRequest, AuthResponse, ApiResponse, User } from '../types';
 
+// Export all functions as named exports
 export const authService = {
-  // Login user
   login: async (email: string, password: string): Promise<ApiResponse<AuthResponse>> => {
-    const response = await api.post('/auth/login', { email, password });
-    return response.data;
+    try {
+      const response = await api.post('/auth/login', { email, password });
+      return response.data;
+    } catch (error: any) {
+      console.error('Login error:', error);
+      return {
+        success: false,
+        message: 'Invalid email or password',
+        error: 'Invalid credentials'
+      };
+    }
   },
 
-  // Register user
   register: async (userData: RegisterRequest): Promise<ApiResponse<AuthResponse>> => {
     const response = await api.post('/auth/register', userData);
     return response.data;
   },
 
-  // Get user profile
-  getProfile: async (): Promise<ApiResponse<any>> => {
+  getProfile: async (): Promise<ApiResponse<User>> => {
     const response = await api.get('/auth/profile');
     return response.data;
   },
 
-  // Logout user (client-side only)
   logout: async (): Promise<void> => {
-    await api.post('/auth/logout');
-    // Clear local storage
     localStorage.removeItem('token');
     localStorage.removeItem('user');
   },
 
-  // Check if user is authenticated
   isAuthenticated: (): boolean => {
-    return !!localStorage.getItem('token');
+    const token = localStorage.getItem('token');
+    return !!token;
   },
 
-  // Get current user from localStorage
-  getCurrentUser: () => {
+  getCurrentUser: (): User | null => {
     const userStr = localStorage.getItem('user');
     if (userStr) {
       try {
@@ -47,15 +49,16 @@ export const authService = {
     return null;
   },
 
-  // Save auth data to localStorage
-  setAuthData: (token: string, user: any): void => {
+  setAuthData: (token: string, user: User): void => {
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(user));
   },
 
-  // Clear auth data
   clearAuthData: (): void => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-  },
+  }
 };
+
+// Also export as default for backward compatibility
+export default authService;
