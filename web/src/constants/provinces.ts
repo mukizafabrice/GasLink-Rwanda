@@ -13,3 +13,16 @@ export const DISTRICTS_BY_PROVINCE: Record<string, string[]> = {
   'Eastern Province': ['Bugesera', 'Gatsibo', 'Kayonza', 'Kirehe', 'Ngoma', 'Nyagatare', 'Rwamagana'],
   'Western Province': ['Karongi', 'Ngororero', 'Nyabihu', 'Nyamasheke', 'Rubavu', 'Rusizi', 'Rutsiro'],
 };
+
+export const SECTORS_BY_DISTRICT: Record<string, string[]> = {
+  Gasabo: ['Kimironko', 'Kacyiru', 'Remera', 'Gisozi'],
+  Kicukiro: ['Gatenga', 'Kagarama', 'Niboye', 'Kanombe'],
+  Nyarugenge: ['Nyamirambo', 'Muhima', 'Kigali', 'Rwezamenyo'],
+  Huye: ['Ngoma', 'Tumba', 'Maraba', 'Mukura'],
+  Muhanga: ['Nyamabuye', 'Shyogwe', 'Mushishiro'],
+  Musanze: ['Muhoza', 'Cyuve', 'Kinigi'],
+  Rubavu: ['Gisenyi', 'Nyamyumba', 'Kanama'],
+  Rusizi: ['Kamembe', 'Muganza', 'Nzahaha'],
+  Rwamagana: ['Karenge', 'Kigabiro', 'Mwulire'],
+  Bugesera: ['Nyamata', 'Ntarama', 'Gashora'],
+};

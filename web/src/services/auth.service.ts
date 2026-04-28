@@ -1,7 +1,6 @@
 import api from './api';
-import type { LoginRequest, RegisterRequest, AuthResponse, ApiResponse, User } from '../types';
+import type { AuthResponse, ApiResponse, Notification, RegisterRequest, User } from '../types';
 
-// Export all functions as named exports
 export const authService = {
   login: async (email: string, password: string): Promise<ApiResponse<AuthResponse>> => {
     try {
@@ -22,8 +21,13 @@ export const authService = {
     return response.data;
   },
 
-  getProfile: async (): Promise<ApiResponse<User>> => {
+  getProfile: async (): Promise<ApiResponse<User | (User & { shop?: unknown })>> => {
     const response = await api.get('/auth/profile');
+    return response.data;
+  },
+
+  getNotifications: async (): Promise<ApiResponse<Notification[]>> => {
+    const response = await api.get('/auth/notifications');
     return response.data;
   },
 
@@ -34,7 +38,8 @@ export const authService = {
 
   isAuthenticated: (): boolean => {
     const token = localStorage.getItem('token');
-    return !!token;
+    const user = localStorage.getItem('user');
+    return !!token && !!user;
   },
 
   getCurrentUser: (): User | null => {
@@ -60,5 +65,4 @@ export const authService = {
   }
 };
 
-// Also export as default for backward compatibility
 export default authService;

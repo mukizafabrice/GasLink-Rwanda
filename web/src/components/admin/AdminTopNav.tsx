@@ -1,19 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Search,
-  Bell,
   HelpCircle,
-  Sun,
-  Moon,
-  Menu,
-  X,
-  Shield,
   LogOut,
-  User,
+  Menu,
+  Search,
   Settings,
-  Mail,
+  Shield,
+  User,
+  X,
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import NotificationBell from "@/components/shared/NotificationBell";
 
 interface AdminTopNavProps {
   user: {
@@ -31,54 +29,19 @@ const AdminTopNav: React.FC<AdminTopNavProps> = ({
   sidebarCollapsed,
 }) => {
   const navigate = useNavigate();
-  const [darkMode, setDarkMode] = useState(false);
+  const { logout } = useAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
-  const [unreadNotifications, setUnreadNotifications] = useState(3);
 
   const handleLogout = async () => {
-    try {
-      // Call logout API
-      const token = localStorage.getItem("token");
-      if (token) {
-        await fetch("http://localhost:5000/api/auth/logout", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-      }
-
-      // Clear local storage
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-
-      // Redirect to login
-      navigate("/login");
-
-      // Show success message
-      alert("Successfully logged out");
-    } catch (error) {
-      console.error("Logout error:", error);
-      // Still clear local storage and redirect
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      navigate("/login");
-    }
-  };
-
-  const markAllAsRead = () => {
-    setUnreadNotifications(0);
+    await logout();
+    navigate("/login");
   };
 
   return (
     <header className="sticky top-0 z-20 bg-white border-b border-gray-200 shadow-sm">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Left Section */}
           <div className="flex items-center">
-            {/* Mobile Menu Button */}
             <button
               onClick={onToggleSidebar}
               className="p-2 transition-colors rounded-lg lg:hidden hover:bg-gray-100"
@@ -90,7 +53,6 @@ const AdminTopNav: React.FC<AdminTopNavProps> = ({
               )}
             </button>
 
-            {/* Desktop Logo */}
             <div className="items-center hidden ml-2 lg:flex">
               <div className="flex items-center space-x-3">
                 <div className="p-2 rounded-lg bg-gradient-to-r from-orange-500 to-orange-600">
@@ -107,7 +69,6 @@ const AdminTopNav: React.FC<AdminTopNavProps> = ({
               </div>
             </div>
 
-            {/* Search Bar */}
             <div className="hidden ml-8 md:block">
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -122,96 +83,20 @@ const AdminTopNav: React.FC<AdminTopNavProps> = ({
             </div>
           </div>
 
-          {/* Right Section */}
           <div className="flex items-center space-x-4">
-            {/* Dark Mode Toggle */}
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className="p-2 transition-colors rounded-lg hover:bg-gray-100"
-              title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-            >
-              {darkMode ? (
-                <Sun className="w-5 h-5 text-gray-700" />
-              ) : (
-                <Moon className="w-5 h-5 text-gray-700" />
-              )}
-            </button>
-
-            {/* Help */}
             <button className="p-2 transition-colors rounded-lg hover:bg-gray-100">
               <HelpCircle className="w-5 h-5 text-gray-700" />
             </button>
 
-            {/* Notifications */}
+            <NotificationBell />
+
             <div className="relative">
               <button
-                onClick={() => setShowNotifications(!showNotifications)}
-                className="relative p-2 transition-colors rounded-lg hover:bg-gray-100"
-              >
-                <Bell className="w-5 h-5 text-gray-700" />
-                {unreadNotifications > 0 && (
-                  <span className="absolute flex items-center justify-center w-5 h-5 text-xs text-white bg-red-500 rounded-full -top-1 -right-1">
-                    {unreadNotifications}
-                  </span>
-                )}
-              </button>
-
-              {showNotifications && (
-                <>
-                  <div
-                    className="fixed inset-0 z-10"
-                    onClick={() => setShowNotifications(false)}
-                  />
-                  <div className="absolute right-0 z-20 mt-2 bg-white border border-gray-200 shadow-2xl w-80 rounded-xl">
-                    <div className="p-4 border-b">
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-semibold text-gray-900">
-                          Notifications
-                        </h3>
-                        {unreadNotifications > 0 && (
-                          <button
-                            onClick={markAllAsRead}
-                            className="text-sm text-orange-600 hover:text-orange-700"
-                          >
-                            Mark all as read
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                    <div className="overflow-y-auto max-h-96">
-                      {/* Notification items */}
-                      <div className="p-4 border-b hover:bg-gray-50">
-                        <div className="flex items-start">
-                          <div className="p-2 mr-3 bg-blue-100 rounded-lg">
-                            <Bell className="w-4 h-4 text-blue-600" />
-                          </div>
-                          <div>
-                            <h4 className="font-medium text-gray-900">
-                              New Merchant Registration
-                            </h4>
-                            <p className="mt-1 text-sm text-gray-600">
-                              Kigali Gas Supplies wants to join
-                            </p>
-                            <p className="mt-2 text-xs text-gray-500">
-                              2 min ago
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-
-            {/* User Profile with Complete Logout */}
-            <div className="relative">
-              <button
-                onClick={() => setShowUserMenu(!showUserMenu)}
+                onClick={() => setShowUserMenu((current) => !current)}
                 className="flex items-center p-2 space-x-3 transition-colors rounded-lg hover:bg-gray-100"
               >
                 <div className="flex items-center justify-center w-10 h-10 font-bold text-white rounded-full bg-gradient-to-r from-orange-500 to-orange-600">
-                  {user.name.charAt(0)}
+                  {user.name.charAt(0).toUpperCase()}
                 </div>
                 <div className="hidden text-left md:block">
                   <div className="font-medium text-gray-900">{user.name}</div>
@@ -219,7 +104,6 @@ const AdminTopNav: React.FC<AdminTopNavProps> = ({
                 </div>
               </button>
 
-              {/* User Dropdown Menu */}
               {showUserMenu && (
                 <>
                   <div
@@ -227,11 +111,10 @@ const AdminTopNav: React.FC<AdminTopNavProps> = ({
                     onClick={() => setShowUserMenu(false)}
                   />
                   <div className="absolute right-0 z-20 w-64 mt-2 bg-white border border-gray-200 shadow-2xl rounded-xl">
-                    {/* User Info */}
                     <div className="p-4 border-b">
                       <div className="flex items-center">
                         <div className="flex items-center justify-center w-12 h-12 text-lg font-bold text-white rounded-full bg-gradient-to-r from-orange-500 to-orange-600">
-                          {user.name.charAt(0)}
+                          {user.name.charAt(0).toUpperCase()}
                         </div>
                         <div className="ml-3">
                           <h4 className="font-semibold text-gray-900">
@@ -245,13 +128,18 @@ const AdminTopNav: React.FC<AdminTopNavProps> = ({
                       </div>
                     </div>
 
-                    {/* Menu Items */}
                     <div className="py-2">
-                      <button className="flex items-center w-full px-4 py-3 text-gray-700 transition-colors hover:bg-gray-50">
+                      <button
+                        onClick={() => navigate("/admin/users")}
+                        className="flex items-center w-full px-4 py-3 text-gray-700 transition-colors hover:bg-gray-50"
+                      >
                         <User className="w-5 h-5 mr-3 text-gray-500" />
                         My Profile
                       </button>
-                      <button className="flex items-center w-full px-4 py-3 text-gray-700 transition-colors hover:bg-gray-50">
+                      <button
+                        onClick={() => navigate("/admin/settings")}
+                        className="flex items-center w-full px-4 py-3 text-gray-700 transition-colors hover:bg-gray-50"
+                      >
                         <Settings className="w-5 h-5 mr-3 text-gray-500" />
                         Settings
                       </button>
@@ -268,20 +156,6 @@ const AdminTopNav: React.FC<AdminTopNavProps> = ({
                 </>
               )}
             </div>
-          </div>
-        </div>
-
-        {/* Mobile Search */}
-        <div className="py-3 md:hidden">
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <Search className="w-5 h-5 text-gray-400" />
-            </div>
-            <input
-              type="text"
-              placeholder="Search..."
-              className="block w-full py-2 pl-10 pr-3 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-            />
           </div>
         </div>
       </div>

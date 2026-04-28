@@ -1,10 +1,13 @@
+import { Request } from 'express';
+import { UserRole } from './user.types';
+
 export interface RegisterInput {
   email: string;
   phone: string;
   password: string;
   firstName: string;
   lastName: string;
-  role: 'CUSTOMER' | 'MERCHANT' | 'DRIVER' | 'ADMIN';
+  role: UserRole;
   province: string;
   district: string;
   sector: string;
@@ -46,12 +49,9 @@ export interface AuthResponse {
 
 export interface TokenPayload {
   userId: string;
-  role: string;
+  role: UserRole;
   email: string;
 }
-
-import { Request } from 'express';
-import { UserRole } from '@prisma/client';
 
 export interface AuthenticatedUser {
   id: string;

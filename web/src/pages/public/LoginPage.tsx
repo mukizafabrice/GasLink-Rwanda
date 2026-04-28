@@ -2,8 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, AlertCircle, Flame } from "lucide-react";
 import { authService } from "@/services/auth.service";
+import { useAuth } from "@/contexts/AuthContext";
+import toast from "react-hot-toast";
 
 const LoginPage: React.FC = () => {
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -26,7 +29,7 @@ const LoginPage: React.FC = () => {
             navigate("/merchant/dashboard");
             break;
           case "CLIENT":
-            navigate("/dashboard");
+            navigate("/client/browse");
             break;
         }
       }
@@ -45,17 +48,17 @@ const LoginPage: React.FC = () => {
       );
 
       if (response.success && response.data) {
-        // Save JWT token and user data to localStorage
         authService.setAuthData(response.data.token, response.data.user);
+        login(response.data.user);
+        toast.success("Welcome back to GasLink");
 
-        // Redirect based on user role
         const role = response.data.user.role;
         if (role === "ADMIN") {
           navigate("/admin/dashboard");
         } else if (role === "MERCHANT") {
           navigate("/merchant/dashboard");
         } else {
-          navigate("/dashboard");
+          navigate("/client/browse");
         }
       } else {
         setError(response.message || "Invalid email or password");
@@ -109,6 +112,27 @@ const LoginPage: React.FC = () => {
         <p className="mt-2 text-sm text-center text-gray-600">
           Use your email and password to access the platform
         </p>
+        <div className="mt-4 text-center">
+          <Link
+            to="/"
+            className="inline-flex items-center text-sm text-orange-600 hover:text-orange-500 transition-colors"
+          >
+            <svg
+              className="w-4 h-4 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
+            </svg>
+            Back to GasLink
+          </Link>
+        </div>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">

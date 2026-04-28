@@ -1,4 +1,47 @@
-import { UserRole, OrderStatus } from '@prisma/client';
+import { UserRole } from './user.types';
+
+export enum OrderStatus {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+  IN_TRANSIT = 'IN_TRANSIT',
+  DELIVERED = 'DELIVERED',
+  CANCELLED = 'CANCELLED'
+}
+
+export enum PaymentStatus {
+  PENDING = 'PENDING',
+  PAID = 'PAID',
+  CASH_ON_DELIVERY = 'CASH_ON_DELIVERY',
+  FAILED = 'FAILED'
+}
+
+export enum VerificationStatus {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED'
+}
+
+export enum NotificationType {
+  ORDER_CREATED = 'ORDER_CREATED',
+  ORDER_UPDATED = 'ORDER_UPDATED',
+  SHOP_VERIFICATION = 'SHOP_VERIFICATION',
+  SYSTEM = 'SYSTEM',
+  REVIEW = 'REVIEW'
+}
+
+export enum ProductCategory {
+  GAS_CYLINDER = 'GAS_CYLINDER'
+}
+
+export enum CylinderType {
+  STANDARD = 'STANDARD'
+}
+
+export enum StockMovementType {
+  STOCK_IN = 'STOCK_IN',
+  STOCK_OUT = 'STOCK_OUT'
+}
 
 // API Response Types
 export interface ApiResponse<T = any> {
@@ -67,34 +110,42 @@ export interface LocationQuery {
 
 // Product Types
 export interface CreateProductRequest {
-  name: string;
-  description?: string;
-  category: string;
-  unit: string;
-  price: number;
-  currentStock: number;
-  minStockLevel?: number;
+  catalogItemId: string;
+  pricePerKg: number;
+  stockQuantity: number;
 }
 
 export interface UpdateProductRequest {
-  name?: string;
-  description?: string;
-  category?: string;
-  unit?: string;
-  price?: number;
-  currentStock?: number;
-  minStockLevel?: number;
+  catalogItemId?: string;
+  pricePerKg?: number;
+  stockQuantity?: number;
   isAvailable?: boolean;
+}
+
+export interface AdjustProductStockRequest {
+  movementType: StockMovementType;
+  quantity: number;
+  pricePerKg?: number;
 }
 
 // Order Types
 export interface CreateOrderRequest {
   merchantId: string;
-  productId: string;
-  quantity: number;
-  deliveryAddress?: string;
+  items: Array<{
+    productId: string;
+    quantity: number;
+  }>;
+  deliveryAddress?: {
+    province: string;
+    district: string;
+    sector: string;
+    cell?: string;
+    village?: string;
+    streetAddress?: string;
+  };
   deliveryFee?: number;
   clientNote?: string;
+  paymentMethod?: PaymentStatus;
 }
 
 export interface UpdateOrderRequest {

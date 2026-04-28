@@ -20,9 +20,6 @@ build/
 *.sqlite
 *.sqlite3
 
-# Prisma
-/prisma/migrations/**/!(*.json)
-
 # IDE
 .vscode/
 .idea/

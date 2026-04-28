@@ -1,11 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
+import { sendError } from '../utils/apiResponse';
 
 const notFoundHandler = (req: Request, res: Response, next: NextFunction) => {
-  const error = new Error(`Not Found - ${req.originalUrl}`);
-  res.status(404).json({
-    status: 'error',
-    message: `Route ${req.originalUrl} not found`,
-  });
+  return sendError(res, 404, `Route ${req.originalUrl} not found`);
 };
 
 export default notFoundHandler;

@@ -1,7 +1,10 @@
-import React, { useState, ReactNode } from "react";
-import AdminTopNav from "./AdminTopNav";
-import AdminSideNav from "./AdminSideNav";
+import React, { useState, type ReactNode } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import AdminFooter from "./AdminFooter";
+import AdminSideNav from "./AdminSideNav";
+import AdminTopNav from "./AdminTopNav";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -14,144 +17,93 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
   pageTitle,
   breadcrumbs = [],
 }) => {
+  const { user, loading } = useAuth();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
-  // Mock user data - will come from auth context
-  const user = {
-    name: "Admin User",
-    email: "admin@gaslink.rw",
-    role: "Super Admin",
-  };
+  if (loading) {
+    return <LoadingSpinner fullScreen label="Loading admin workspace..." />;
+  }
 
-  const toggleSidebar = () => {
-    setSidebarCollapsed(!sidebarCollapsed);
-  };
+  if (!user) {
+    return null;
+  }
 
-  const toggleMobileSidebar = () => {
-    setMobileSidebarOpen(!mobileSidebarOpen);
+  const adminUser = {
+    name: `${user.firstName} ${user.lastName}`.trim() || "Admin User",
+    email: user.email,
+    role: user.role,
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Desktop Sidebar - Fixed position */}
       <div className="fixed inset-y-0 left-0 z-30 hidden lg:block">
         <AdminSideNav
           collapsed={sidebarCollapsed}
-          onToggleCollapse={toggleSidebar}
+          onToggleCollapse={() => setSidebarCollapsed((current) => !current)}
         />
       </div>
 
-      {/* Mobile Sidebar - Overlay */}
       <div
-        className={`
-        lg:hidden fixed inset-y-0 left-0 z-40 transform
-        ${mobileSidebarOpen ? "translate-x-0" : "-translate-x-full"}
-        transition-transform duration-300 ease-in-out
-      `}
+        className={`lg:hidden fixed inset-y-0 left-0 z-40 transform ${
+          mobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } transition-transform duration-300`}
       >
         <AdminSideNav
           collapsed={false}
-          onToggleCollapse={toggleMobileSidebar}
+          onToggleCollapse={() => setMobileSidebarOpen(false)}
         />
       </div>
 
-      {/* Mobile Overlay */}
       {mobileSidebarOpen && (
         <div
-          className="fixed inset-0 z-30 bg-black bg-opacity-50 lg:hidden"
-          onClick={toggleMobileSidebar}
+          className="fixed inset-0 z-30 bg-black/40 lg:hidden"
+          onClick={() => setMobileSidebarOpen(false)}
         />
       )}
 
-      {/* Main Content Area */}
       <div
-        className={`
-        flex flex-col min-h-screen
-        ${sidebarCollapsed ? "lg:ml-20" : "lg:ml-64"}
-        transition-all duration-300 ease-in-out
-      `}
+        className={`flex flex-col min-h-screen ${
+          sidebarCollapsed ? "lg:ml-20" : "lg:ml-64"
+        } transition-all duration-300`}
       >
-        {/* Top Navigation */}
         <AdminTopNav
-          user={user}
-          onToggleSidebar={toggleMobileSidebar}
+          user={adminUser}
+          onToggleSidebar={() => setMobileSidebarOpen((current) => !current)}
           sidebarCollapsed={sidebarCollapsed}
         />
 
-        {/* Main Content */}
         <main className="flex-1">
-          {/* Page Header */}
           <div className="px-4 py-6 bg-white border-b border-gray-200 sm:px-6 lg:px-8">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  {pageTitle}
-                </h1>
-
-                {/* Breadcrumbs */}
-                {breadcrumbs.length > 0 && (
-                  <nav className="flex mt-2" aria-label="Breadcrumb">
-                    <ol className="flex items-center space-x-2">
-                      <li>
-                        <a
-                          href="/admin/dashboard"
-                          className="text-gray-500 hover:text-gray-700"
-                        >
-                          Home
-                        </a>
-                      </li>
-                      {breadcrumbs.map((crumb, index) => (
-                        <li key={index} className="flex items-center">
-                          <svg
-                            className="w-5 h-5 mx-2 text-gray-400"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                          {crumb.path ? (
-                            <a
-                              href={crumb.path}
-                              className="text-gray-500 hover:text-gray-700"
-                            >
-                              {crumb.label}
-                            </a>
-                          ) : (
-                            <span className="font-medium text-gray-900">
-                              {crumb.label}
-                            </span>
-                          )}
-                        </li>
-                      ))}
-                    </ol>
-                  </nav>
-                )}
-              </div>
-
-              {/* Page Actions */}
-              <div className="flex mt-4 space-x-3 sm:mt-0">
-                <button className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
-                  Export
-                </button>
-                <button className="inline-flex items-center px-4 py-2 text-sm font-medium text-white border border-transparent rounded-lg bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
-                  Add New
-                </button>
-              </div>
+            <div className="flex flex-col gap-2">
+              <h1 className="text-2xl font-bold text-gray-900">{pageTitle}</h1>
+              {breadcrumbs.length > 0 && (
+                <nav className="flex text-sm text-gray-500">
+                  <Link to="/admin/dashboard" className="hover:text-gray-700">
+                    Dashboard
+                  </Link>
+                  {breadcrumbs.map((crumb) => (
+                    <React.Fragment key={`${crumb.label}-${crumb.path || "current"}`}>
+                      <span className="mx-2">/</span>
+                      {crumb.path ? (
+                        <Link to={crumb.path} className="hover:text-gray-700">
+                          {crumb.label}
+                        </Link>
+                      ) : (
+                        <span className="text-gray-900">{crumb.label}</span>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </nav>
+              )}
             </div>
           </div>
 
-          {/* Page Content */}
           <div className="p-4 sm:p-6 lg:p-8">
             <div className="mx-auto max-w-7xl">{children}</div>
           </div>
         </main>
 
-        {/* Footer */}
         <AdminFooter />
       </div>
     </div>

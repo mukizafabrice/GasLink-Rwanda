@@ -9,11 +9,23 @@ export enum UserRole {
 export interface User {
   id: string;
   email: string;
+  password: string;
   firstName: string;
   lastName: string;
   phone?: string;
   role: UserRole;
   isActive: boolean;
+  emailVerified?: boolean;
+  phoneVerified?: boolean;
+  savedMerchants?: string[];
+  address?: {
+    province?: string;
+    district?: string;
+    sector?: string;
+    cell?: string;
+    village?: string;
+    streetAddress?: string;
+  };
   createdAt: Date;
   updatedAt: Date;
 }

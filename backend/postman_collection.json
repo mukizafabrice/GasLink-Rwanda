@@ -49,7 +49,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"customer@example.com\",\n  \"password\": \"Password123!\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"phone\": \"+250788123456\",\n  \"role\": \"CUSTOMER\"\n}"
+              "raw": "{\n  \"email\": \"client@example.com\",\n  \"password\": \"Client123!\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"phone\": \"+250788123456\",\n  \"role\": \"CLIENT\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/auth/register",
@@ -126,7 +126,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"customer@example.com\",\n  \"password\": \"Password123!\"\n}"
+              "raw": "{\n  \"email\": \"client@example.com\",\n  \"password\": \"Client123!\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/auth/login",
@@ -161,7 +161,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"admin@gaslink.rw\",\n  \"password\": \"AdminPass123!\"\n}"
+              "raw": "{\n  \"email\": \"admin@gaslink.rw\",\n  \"password\": \"Admin123!\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/auth/login",

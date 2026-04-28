@@ -1,16 +1,15 @@
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
-  LayoutDashboard,
-  Users,
-  Building2,
-  ShoppingCart,
-  Package,
   BarChart3,
-  Settings,
-  Shield,
+  Building2,
   ChevronLeft,
   ChevronRight,
+  Flame,
+  LayoutDashboard,
+  Settings,
+  Shield,
+  Users,
 } from "lucide-react";
 
 interface AdminSideNavProps {
@@ -36,24 +35,19 @@ const AdminSideNav: React.FC<AdminSideNavProps> = ({
       icon: <Users className="w-5 h-5" />,
     },
     {
-      title: "Merchants",
-      path: "/admin/merchants",
+      title: "Verifications",
+      path: "/admin/merchant-verifications",
       icon: <Building2 className="w-5 h-5" />,
-    },
-    {
-      title: "Orders",
-      path: "/admin/orders",
-      icon: <ShoppingCart className="w-5 h-5" />,
-    },
-    {
-      title: "Products",
-      path: "/admin/products",
-      icon: <Package className="w-5 h-5" />,
     },
     {
       title: "Analytics",
       path: "/admin/analytics",
       icon: <BarChart3 className="w-5 h-5" />,
+    },
+    {
+      title: "Gas Catalog",
+      path: "/admin/gas-catalog",
+      icon: <Flame className="w-5 h-5" />,
     },
     {
       title: "Settings",
@@ -62,18 +56,14 @@ const AdminSideNav: React.FC<AdminSideNavProps> = ({
     },
   ];
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => location.pathname.startsWith(path);
 
   return (
     <aside
-      className={`
-      h-screen bg-gradient-to-b from-gray-900 to-black text-white
-      ${collapsed ? "w-20" : "w-64"}
-      transition-all duration-300
-      flex flex-col
-    `}
+      className={`h-screen bg-gradient-to-b from-gray-900 to-black text-white ${
+        collapsed ? "w-20" : "w-64"
+      } transition-all duration-300 flex flex-col`}
     >
-      {/* Logo Section */}
       <div className="p-4 border-b border-gray-800">
         <div className="flex items-center justify-between">
           {!collapsed ? (
@@ -94,7 +84,6 @@ const AdminSideNav: React.FC<AdminSideNavProps> = ({
             </div>
           )}
 
-          {/* Collapse Toggle (Desktop only) */}
           <button
             onClick={onToggleCollapse}
             className="hidden p-1 transition-colors rounded lg:block hover:bg-gray-800"
@@ -109,7 +98,6 @@ const AdminSideNav: React.FC<AdminSideNavProps> = ({
         </div>
       </div>
 
-      {/* Navigation Items */}
       <nav className="flex-1 py-4 overflow-y-auto">
         <ul className="px-3 space-y-1">
           {navItems.map((item) => {
@@ -119,20 +107,14 @@ const AdminSideNav: React.FC<AdminSideNavProps> = ({
               <li key={item.path}>
                 <NavLink
                   to={item.path}
-                  className={`
-                    flex items-center px-4 py-3 rounded-xl transition-all
-                    ${
-                      active
-                        ? "bg-gradient-to-r from-orange-500/20 to-orange-600/20 text-orange-400 border-l-4 border-orange-500"
-                        : "hover:bg-gray-800 text-gray-300 hover:text-white"
-                    }
-                    ${collapsed ? "justify-center" : ""}
-                  `}
+                  className={`flex items-center px-4 py-3 rounded-xl transition-all ${
+                    active
+                      ? "bg-gradient-to-r from-orange-500/20 to-orange-600/20 text-orange-400 border-l-4 border-orange-500"
+                      : "hover:bg-gray-800 text-gray-300 hover:text-white"
+                  } ${collapsed ? "justify-center" : ""}`}
                   title={collapsed ? item.title : ""}
                 >
-                  <div
-                    className={`${active ? "text-orange-400" : "text-gray-400"}`}
-                  >
+                  <div className={active ? "text-orange-400" : "text-gray-400"}>
                     {item.icon}
                   </div>
                   {!collapsed && (
@@ -145,11 +127,8 @@ const AdminSideNav: React.FC<AdminSideNavProps> = ({
         </ul>
       </nav>
 
-      {/* Bottom Section */}
       <div className="p-4 border-t border-gray-800">
-        <div
-          className={`${collapsed ? "text-center" : "text-sm text-gray-400"}`}
-        >
+        <div className={collapsed ? "text-center" : "text-sm text-gray-400"}>
           {!collapsed ? (
             <>
               <div className="flex items-center justify-between mb-2">

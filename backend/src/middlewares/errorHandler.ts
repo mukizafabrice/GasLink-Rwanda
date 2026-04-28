@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { sendError } from '../utils/apiResponse';
 
 // Custom error class for app-specific errors
 export class AppError extends Error {
@@ -11,13 +12,6 @@ export class AppError extends Error {
     this.isOperational = true;
     Error.captureStackTrace(this, this.constructor);
   }
-}
-
-// Error response interface
-interface ErrorResponse {
-  status: 'error';
-  message: string;
-  stack?: string;
 }
 
 // Global error handler middleware
@@ -71,14 +65,12 @@ const errorHandler = (
     });
   }
 
-  // Send error response
-  const errorResponse: ErrorResponse = {
-    status: 'error',
+  return sendError(
+    res,
+    statusCode,
     message,
-    ...(process.env.NODE_ENV === 'development' && { stack }),
-  };
-
-  res.status(statusCode).json(errorResponse);
+    process.env.NODE_ENV === 'development' ? stack : undefined
+  );
 };
 
 export default errorHandler;
