@@ -1,0 +1,27 @@
+import request from 'supertest';
+import app from '../app';
+
+describe('Express App', () => {
+  describe('Health Check Endpoint', () => {
+    it('should return 200 and health status', async () => {
+      const res = await request(app)
+        .get('/api/health')
+        .expect(200);
+
+      expect(res.body).toHaveProperty('success', true);
+      expect(res.body).toHaveProperty('message');
+      expect(res.body).toHaveProperty('timestamp');
+      expect(res.body).toHaveProperty('database');
+    });
+  });
+
+  describe('404 Handler', () => {
+    it('should return 404 for undefined routes', async () => {
+      const res = await request(app)
+        .get('/api/nonexistent')
+        .expect(404);
+
+      expect(res.body).toHaveProperty('error');
+    });
+  });
+});
